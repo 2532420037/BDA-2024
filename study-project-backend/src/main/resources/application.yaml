@@ -1,16 +1,15 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.1.88:3306/study?useUnicode=true&characterEncoding=utf-8
-    username: test
+    url: jdbc:mysql://localhost:3306/test?characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
     password: 123456
   mail:
     host: smtp.163.com
-    username: javastudy111@163.com
-    password: ADNMGCTHSQGDJLUE
+    username: 15095389550@163.com
+    password: QNgFp33bK7VXmTy4
     port: 465
     properties:
-      from: javastudy111@163.com
+      from: 15095389550@163.com
       mail:
         smtp:
           socketFactory:

@@ -87,6 +87,7 @@ public class AuthorizeServiceImpl implements AuthorizeService {
                 Account account = mapper.findAccountByNameOrEmail(username);
                 if(account != null) return "此用户名已被注册，请更换用户名";
                 template.delete(key);
+                // email = encoder.encode(email);
                 password = encoder.encode(password);
                 if (mapper.createAccount(username, password, email) > 0) {
                     return null;
