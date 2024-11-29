@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.util.Optional;
 import java.util.Random;
@@ -40,6 +41,9 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if(username == null)
             throw new UsernameNotFoundException("用户名不能为空");
+        if(username.contains(".com")) {
+            username = DigestUtils.md5DigestAsHex(username.getBytes());
+        }
         Account account = mapper.findAccountByNameOrEmail(username);
         if(account == null)
             throw new UsernameNotFoundException("用户名或密码错误");
@@ -87,7 +91,7 @@ public class AuthorizeServiceImpl implements AuthorizeService {
                 Account account = mapper.findAccountByNameOrEmail(username);
                 if(account != null) return "此用户名已被注册，请更换用户名";
                 template.delete(key);
-                // email = encoder.encode(email);
+                email = DigestUtils.md5DigestAsHex(email.getBytes());
                 password = encoder.encode(password);
                 if (mapper.createAccount(username, password, email) > 0) {
                     return null;
