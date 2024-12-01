@@ -39,7 +39,7 @@
         <el-table-column
             label="论文"
             prop="custom"
-            :width="300"
+            :min-width="100"
         >
           <template #default="{ row }">
             [{{ row.year }}] [{{ row.category }}] : {{ row.title }}
@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { get, post } from "@/net"; // 假设 get 和 post 是封装好的请求方法
+import { get, post } from "@/net";
 import { ElMessage } from "element-plus";
 import { useStore } from "@/stores";
 import { ref } from "vue";
@@ -92,7 +92,7 @@ const upgradeVip = () => {
 
 // 搜索论文
 const searchPapers = () => {
-  get(`/api/key_search/?query=${searchQuery.value}&page=${pagination.value.currentPage}&pageSize=${pagination.value.pageSize}`, (data) => {
+  get(`/api/paper/search?query=${searchQuery.value}&page=${pagination.value.currentPage}&pageSize=${pagination.value.pageSize}`, (data) => {
     papers.value = data.papers;
     pagination.value.total = data.totalCount;
   });
