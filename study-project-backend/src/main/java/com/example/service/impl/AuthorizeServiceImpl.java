@@ -41,7 +41,7 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if(username == null)
             throw new UsernameNotFoundException("用户名不能为空");
-        if(username.contains(".com")) {
+        if(username.contains(".com")||username.contains(".cn")) {
             username = DigestUtils.md5DigestAsHex(username.getBytes());
         }
         Account account = mapper.findAccountByNameOrEmail(username);
