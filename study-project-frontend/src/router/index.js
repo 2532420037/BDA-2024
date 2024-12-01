@@ -27,6 +27,10 @@ const router = createRouter({
       path: '/index',
       name: 'index',
       component: () => import('@/views/IndexView.vue')
+    },{
+      path: '/paper/:id',
+      name: 'PaperDetail',
+      component: () => import('@/views/PaperDetail.vue')  // 论文详情页组件
     }
   ]
 })

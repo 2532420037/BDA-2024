@@ -128,4 +128,28 @@ public class AuthorizeServiceImpl implements AuthorizeService {
         password = encoder.encode(password);
         return mapper.resetPasswordByEmail(password, email) > 0;
     }
+
+    public String upgradeToVip(int userId) {
+        // 查找用户
+//        Account account = mapper.findAccountByNameOrEmail(userId); // 可以通过ID查找
+//        if (account == null) {
+//            return "用户不存在";
+//        }
+//
+//        // 检查用户是否已经是VIP
+//        if (account.isVip()) {
+//            return "用户已经是VIP";
+//        }
+
+        // 更新VIP状态
+        int rowsAffected = mapper.upgradeToVip(userId);
+//        System.out.println("hh");
+//        System.out.println(rowsAffected);
+        if (rowsAffected > 0) {
+
+            return "VIP升级成功";
+        } else {
+            return "VIP升级失败";
+        }
+    }
 }

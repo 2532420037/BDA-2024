@@ -20,4 +20,8 @@ public interface UserMapper {
 
     @Update("update db_account set password = #{password} where email = #{email}")
     int resetPasswordByEmail(String password, String email);
+
+    // 更新VIP状态
+    @Update("UPDATE db_account SET isVip = TRUE WHERE id = #{id}")
+    int upgradeToVip(int id);  // 通过用户ID来升级为VIP
 }

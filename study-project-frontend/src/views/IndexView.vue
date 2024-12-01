@@ -3,7 +3,7 @@
     <!-- 用户信息部分，右上角显示 -->
     <div class="user-info">
       <div class="welcome-text">
-        欢迎 <strong>{{ store.auth.user.username }}</strong>
+        欢迎您 <strong>{{ store.auth.user.username }}</strong>
       </div>
       <div>
         <span class="vip-status">{{ isVip ? 'VIP' : '普通用户' }}</span>
@@ -36,13 +36,10 @@
           class="papers-table"
       >
         <!-- 使用插槽来展示自定义内容 -->
-        <el-table-column
-            label="论文"
-            prop="custom"
-            :min-width="100"
-        >
+        <el-table-column label="论文" prop="custom" :min-width="100">
           <template #default="{ row }">
-            [{{ row.year }}] [{{ row.category }}] : {{ row.title }}
+            [{{ row.year }}] [{{ row.category }}] :
+            <el-button @click="goToPaperDetail(row.id)" type="text">{{ row.title }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -81,12 +78,14 @@ const logout = () => {
   });
 }
 
-// 升级为VIP
+
 const upgradeVip = () => {
-  post('/api/auth/upgradeVip', {}, (message) => {
-    ElMessage.success(message);
-    isVip.value = true; // 将VIP状态更新为true
-    store.auth.user.isVip = 1; // 更新本地存储的用户状态
+  post('/api/auth/upgradeVip', { userId: store.auth.user.id }, (message) => {
+    ElMessage.success(message); // 显示成功或失败信息
+    if (message === 'VIP升级成功') {
+      isVip.value = true; // 更新前端的VIP状态
+      store.auth.user.isVip = 1; // 更新本地用户数据
+    }
   });
 }
 
@@ -103,9 +102,15 @@ const handlePageChange = (page) => {
   pagination.value.currentPage = page;
   searchPapers(); // 每次分页变化时重新搜索
 }
+// 前端跳转到论文详情页
+const goToPaperDetail = (paperId) => {
+  router.push({ name: 'PaperDetail', params: { id: paperId } });
+}
+
 
 // 初始化时调用搜索
 searchPapers();
+
 </script>
 
 <style scoped>
