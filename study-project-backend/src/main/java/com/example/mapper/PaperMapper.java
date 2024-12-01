@@ -20,5 +20,9 @@ public interface PaperMapper {
     // 查询符合条件的总记录数
     @Select("SELECT COUNT(*) FROM db_papers WHERE title LIKE CONCAT('%', #{query}, '%') OR abstracts LIKE CONCAT('%', #{query}, '%')")
     long countPapers(@Param("query") String query);
+
+    // 根据论文ID获取论文信息
+    @Select("SELECT * FROM db_papers WHERE id = #{id}")
+    Paper getPaperById(int id);
 }
 

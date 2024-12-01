@@ -20,4 +20,9 @@ public class PaperServiceImpl implements PaperService {
         long totalCount = paperMapper.countPapers(query); // 获取总记录数
         return new PageResponse(papers, totalCount);
     }
+
+    // 获取论文信息
+    public Paper getPaperById(int paperId) {
+        return paperMapper.getPaperById(paperId);
+    }
 }

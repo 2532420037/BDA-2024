@@ -23,6 +23,14 @@ public class AuthorizeController {
     @Resource
     AuthorizeService service;
 
+
+    @PostMapping("/upgradeVip")
+    public RestBean<String> upgradeVip(@RequestParam int userId) {
+//        System.out.println(userId);
+//        System.out.println(service.upgradeToVip(userId));
+        return RestBean.success(service.upgradeToVip(userId));
+    }
+
     @PostMapping("/valid-register-email")
     public RestBean<String> validateRegisterEmail(@Pattern(regexp = EMAIL_REGEX) @RequestParam("email") String email,
                                           HttpSession session){
@@ -82,4 +90,6 @@ public class AuthorizeController {
             return RestBean.failure(500, "内部错误，请联系管理员");
         }
     }
+
+
 }

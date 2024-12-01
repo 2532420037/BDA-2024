@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Paper {
-    int id;
+    public int id;
     String title;
     String abstracts;
     String category;
