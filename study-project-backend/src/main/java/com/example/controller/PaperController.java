@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.entity.PageResponse;
+import com.example.entity.PaperDetail;
 import com.example.entity.RestBean;
 import com.example.entity.paper.Paper;
 import com.example.entity.user.AccountUser;
@@ -28,12 +29,10 @@ public class PaperController {
     }
 
     @GetMapping("/{id}")
-    public RestBean<Paper> getPaperDetail(@PathVariable("id") int paperId,
+    public RestBean<PaperDetail> getPaperDetail(@PathVariable("id") int paperId,
                                           @SessionAttribute("account") AccountUser user) {
-        System.out.println("111");
         // 获取论文详情，只返回标题和摘要
-        Paper paper = paperService.getPaperById(paperId);
-        System.out.println(paper.id);
+        PaperDetail paper = paperService.getPaperById(paperId);
 
         // 返回论文信息
         return RestBean.success(paper);

@@ -1,15 +1,34 @@
 <template>
   <div class="paper-detail-container">
+    <el-button
+        @click="goBack"
+        type="text"
+        class="back-button"
+        icon="el-icon-arrow-left"
+    >
+      首页
+    </el-button>
     <div class="paper-header">
       <h2 class="paper-title">{{ paper.title }}</h2>
-      <p class="paper-abstract"><strong>摘要:</strong> {{ paper.abstracts }}</p>
+      <p class="paper-abstract"><strong>Abstract:</strong> {{ paper.abstracts }}</p>
     </div>
 
     <div class="section">
       <h3 class="section-title">引用论文:</h3>
-      <el-table :data="citedPapers" class="paper-table" border>
-        <el-table-column label="标题" prop="title"></el-table-column>
-        <el-table-column label="作者" prop="authors"></el-table-column>
+      <el-table
+          :data="citedPapers"
+          style="width: 100%; margin-top: 20px"
+          :show-header="false"
+          stripe
+          class="citedPapers-table"
+      >
+        <!-- 使用插槽来展示自定义内容 -->
+        <el-table-column label="论文" prop="custom" :min-width="100">
+          <template #default="{ row }">
+            [{{ row.year }}] [{{ row.category }}] :
+            <el-button @click="goToPaperDetail(row.id)" type="text">{{ row.title }}</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
 
@@ -25,11 +44,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { get } from "@/net";  // 假设你有一个 `get` 函数来发送请求
 import { useStore } from "@/stores";
-import { ElMessage } from 'element-plus';
+import { ElMessage} from 'element-plus';
+import router from "@/router";
 
 const store = useStore();
 const route = useRoute();
@@ -42,9 +62,9 @@ const isVip = ref(store.auth.user.isVip);  // 判断用户是否为VIP
 const getPaperDetail = () => {
   const paperId = route.params.id;
   get(`/api/paper/${paperId}`, (data) => {
-    console.log(data)
-    paper.value = data;
+    paper.value = data.paper;
     // 引用的论文
+    citedPapers.value = data.citedPapers;
     if (isVip.value) {
       similarPapers.value = data.similarPapers;  // VIP用户看到的相似论文
     }
@@ -53,8 +73,22 @@ const getPaperDetail = () => {
   });
 }
 
+// 前端跳转到论文详情页
+const goToPaperDetail = (paperId) => {
+  router.push({ name: 'PaperDetail', params: { id: paperId } });
+}
+
+// 返回按钮跳转到搜索页面
+const goBack = () => {
+  router.push({ name: 'index' });  // 跳转到搜索页面
+}
+
 // 页面加载时调用
 onMounted(() => {
+  getPaperDetail();
+});
+
+watch(() => route.params.id, () => {
   getPaperDetail();
 });
 </script>
@@ -77,6 +111,15 @@ onMounted(() => {
   text-align: center;
   padding-bottom: 20px;
   border-bottom: 2px solid #f0f0f0;
+}
+
+/* 返回按钮样式 */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 16px;
+  color: #2d87f0;
 }
 
 .paper-title {
@@ -121,6 +164,11 @@ onMounted(() => {
 
 .paper-table .el-table-column {
   padding: 10px;
+}
+
+.citedPapers-table {
+  width: 100%;
+  margin-top: 20px;
 }
 
 .paper-table .el-table-column .cell {

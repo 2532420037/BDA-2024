@@ -9,4 +9,5 @@ public class Paper {
     String abstracts;
     String category;
     int year;
+    String citations;
 }
