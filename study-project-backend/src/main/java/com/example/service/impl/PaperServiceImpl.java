@@ -5,10 +5,18 @@ import com.example.entity.PaperDetail;
 import com.example.entity.paper.Paper;
 import com.example.mapper.PaperMapper;
 import com.example.service.PaperService;
+import io.milvus.v2.service.collection.request.LoadCollectionReq;
+import io.milvus.v2.service.vector.response.GetResp;
+import io.milvus.v2.service.vector.response.QueryResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
+import io.milvus.v2.client.ConnectConfig;
+import io.milvus.v2.client.MilvusClientV2;
+import io.milvus.v2.service.vector.request.SearchReq;
+import io.milvus.v2.service.vector.request.data.FloatVec;
+import io.milvus.v2.service.vector.response.SearchResp;
+import io.milvus.v2.service.vector.request.GetReq;
 
 @Service
 public class PaperServiceImpl implements PaperService {
@@ -45,5 +53,51 @@ public class PaperServiceImpl implements PaperService {
         }
 
         return new PaperDetail(now, citationPapers);
+    }
+
+    public List<Paper> getSimilarPaperById(int paperId) {
+        MilvusClientV2 client = new MilvusClientV2(ConnectConfig.builder()
+                .uri("http://localhost:19530")
+                .token("root:Milvus")
+                .build());
+
+        client.loadCollection(LoadCollectionReq.builder()
+                .collectionName("db_vector")
+                .build());
+
+        GetReq getReq = GetReq.builder()
+                .collectionName("db_vector")
+                .ids(List.of(paperId))
+                .outputFields(Arrays.asList("vector"))
+                .build();
+        GetResp getResp = client.get(getReq);
+        List<QueryResp.QueryResult> results = getResp.getGetResults();
+        String tem = results.get(0).getEntity().get("vector").toString();
+        String[] strArray = tem.substring(1, tem.length() - 1).split(",");
+        // 创建一个浮点数组
+        float[] targetVector = new float[strArray.length];
+        // 将每个字符串元素转换为 float
+        for (int i = 0; i < strArray.length; i++) {
+            targetVector[i] = Float.parseFloat(strArray[i]);
+        }
+        SearchReq searchReq = SearchReq.builder()
+                .collectionName("db_vector")
+                .data(Collections.singletonList(new FloatVec(targetVector)))
+                .topK(11)
+                .build();
+        SearchResp searchResp = client.search(searchReq);
+        List<Long> similarPaperIds = new ArrayList<>();
+        for (SearchResp.SearchResult result : searchResp.getSearchResults().get(0)) {
+            similarPaperIds.add((Long) result.getId());
+        }
+        if (similarPaperIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Paper> similarPapers = new ArrayList<>();
+        for (Long id : similarPaperIds) {
+            similarPapers.add(paperMapper.getPaperById(id.intValue()));
+        }
+        similarPapers.remove(0);
+        return similarPapers;
     }
 }

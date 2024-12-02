@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Validated
 @RestController
 @RequestMapping("/api/paper")
@@ -36,6 +38,16 @@ public class PaperController {
 
         // 返回论文信息
         return RestBean.success(paper);
+    }
+
+    @GetMapping("/similar/{id}")
+    public RestBean<List<Paper>> getSimilarPaper(@PathVariable("id") int paperId,
+                                                @SessionAttribute("account") AccountUser user) {
+        // 获取论文详情，只返回标题和摘要
+        List<Paper> papers = paperService.getSimilarPaperById(paperId);
+
+        // 返回论文信息
+        return RestBean.success(papers);
     }
 }
 
