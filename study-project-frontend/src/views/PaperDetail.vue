@@ -50,10 +50,6 @@
           </template>
         </el-table-column>
       </el-table>
-<!--      <el-table :data="similarPapers" class="paper-table" border>-->
-<!--        <el-table-column label="标题" prop="title"></el-table-column>-->
-<!--        <el-table-column label="作者" prop="authors"></el-table-column>-->
-<!--      </el-table>-->
     </div>
   </div>
 </template>
