@@ -10,7 +10,7 @@
     </el-button>
     <div class="paper-header">
       <h2 class="paper-title">{{ paper.title }}</h2>
-      <p class="paper-abstract"><strong>Abstract:</strong> {{ paper.abstracts }}</p>
+      <p class="paper-abstract"><strong>[{{ paper.year }}] [{{ paper.category }}] Abstract:</strong> {{ paper.abstracts }}</p>
     </div>
 
     <div class="section">
