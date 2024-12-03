@@ -69,6 +69,13 @@
         </el-table-column>
       </el-table>
     </div>
+    <!-- VIP 用户额外显示的部分，领域论文趋势图 -->
+    <div v-if="isVip" class="section">
+      <h3 class="section-title">领域论文趋势:</h3>
+      <!-- 使用动态路径加载图片 -->
+
+      <img :src="`/images/${paper.category}.png`" alt="领域论文趋势图" class="category-trend-image" />
+    </div>
     <!-- 非VIP用户提示信息 -->
     <div v-if="!isVip" class="vip-upgrade-info">
       <p>
@@ -99,9 +106,11 @@ const isVip = ref(store.auth.user.isVip);  // 判断用户是否为VIP
 
 // 获取论文详情
 const getPaperDetail = () => {
+
   const paperId = route.params.id;
   get(`/api/paper/${paperId}`, (data) => {
     paper.value = data.paper;
+    console.log(paper.value.category)
     // 引用的论文
     citedPapers.value = data.citedPapers;
     if (isVip.value) {
