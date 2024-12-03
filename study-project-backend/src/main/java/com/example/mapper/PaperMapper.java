@@ -24,5 +24,10 @@ public interface PaperMapper {
     // 根据论文ID获取论文信息
     @Select("SELECT * FROM db_papers WHERE id = #{id}")
     Paper getPaperById(int id);
+
+    // 根据论文的类别查询同类论文
+    @Select("SELECT * FROM db_papers WHERE category = #{category} AND id != #{id} ORDER BY year DESC LIMIT 10")
+    List<Paper> getRelatedPapers(@Param("category") String category, @Param("id") int paperId);
+
 }
 
