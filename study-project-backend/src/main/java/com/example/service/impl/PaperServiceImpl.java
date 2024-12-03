@@ -36,9 +36,13 @@ public class PaperServiceImpl implements PaperService {
     public PaperDetail getPaperById(int paperId) {
         Paper now = paperMapper.getPaperById(paperId);
         String cits = now.getCitations();
+        List<Paper> relatedPapers = null;
+
+        relatedPapers = paperMapper.getRelatedPapers(now.getCategory(), paperId);  // 获取同类论文
         if (cits == null) { // 如果没有引用，则直接返回当前论文
-            return new PaperDetail(now, new ArrayList<>(),new ArrayList<>());
+            return new PaperDetail(now, new ArrayList<>(),relatedPapers);
         }
+
 
         String[] citIds = cits.split(",");
 
@@ -52,9 +56,7 @@ public class PaperServiceImpl implements PaperService {
             citationPapers.add(citationPaper); // 添加到列表
         }
         // 获取同类论文，仅VIP用户可见
-        List<Paper> relatedPapers = null;
 
-        relatedPapers = paperMapper.getRelatedPapers(now.getCategory(), paperId);  // 获取同类论文
 
 
         return new PaperDetail(now, citationPapers, relatedPapers);

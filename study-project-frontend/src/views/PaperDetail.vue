@@ -105,7 +105,6 @@ const getPaperDetail = () => {
     // 引用的论文
     citedPapers.value = data.citedPapers;
     if (isVip.value) {
-      similarPapers.value = data.similarPapers;
       relatedPapers.value = data.relatedPapers; // VIP用户看到的相似论文
     }
   }, () => {
