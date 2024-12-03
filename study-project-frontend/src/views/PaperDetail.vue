@@ -31,6 +31,24 @@
         </el-table-column>
       </el-table>
     </div>
+    <div v-if="isVip" class="section">
+      <h3 class="section-title">同类论文:</h3>
+      <el-table
+          :data="relatedPapers"
+          style="width: 100%; margin-top: 20px"
+          :show-header="false"
+          stripe
+          class="citedPapers-table"
+      >
+        <!-- 使用插槽来展示自定义内容 -->
+        <el-table-column label="论文" prop="custom" :min-width="100">
+          <template #default="{ row }">
+            [{{ row.year }}] [{{ row.category }}] :
+            <el-button @click="goToPaperDetail(row.id)" type="text">{{ row.title }}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
     <!-- VIP 用户额外显示的内容 -->
     <div v-if="isVip" class="section">
@@ -40,6 +58,15 @@
         <el-table-column label="作者" prop="authors"></el-table-column>
       </el-table>
     </div>
+    <!-- 非VIP用户提示信息 -->
+    <div v-if="!isVip" class="vip-upgrade-info">
+      <p>
+        升级为VIP后即可享受查看相似论文等众多进阶服务！
+
+      </p>
+    </div>
+
+
   </div>
 </template>
 
@@ -56,6 +83,7 @@ const route = useRoute();
 const paper = ref({});
 const citedPapers = ref([]);
 const similarPapers = ref([]);
+const relatedPapers = ref([]);
 const isVip = ref(store.auth.user.isVip);  // 判断用户是否为VIP
 
 // 获取论文详情
@@ -66,7 +94,8 @@ const getPaperDetail = () => {
     // 引用的论文
     citedPapers.value = data.citedPapers;
     if (isVip.value) {
-      similarPapers.value = data.similarPapers;  // VIP用户看到的相似论文
+      similarPapers.value = data.similarPapers;
+      relatedPapers.value = data.relatedPapers; // VIP用户看到的相似论文
     }
   }, () => {
     ElMessage.error("获取论文详情失败！");
@@ -142,6 +171,33 @@ watch(() => route.params.id, () => {
 .section {
   margin-bottom: 40px;
 }
+/* 非VIP用户提示信息 */
+.vip-upgrade-info {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.vip-upgrade-info p {
+  font-size: 18px;
+  color: #555;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.vip-upgrade-info p el-button {
+  color: #2d87f0;
+  font-size: 16px;
+  text-decoration: underline;
+}
+
+.vip-upgrade-info p el-button:hover {
+  color: #1a6bb8;
+}
+
 
 .section-title {
   font-size: 26px;
