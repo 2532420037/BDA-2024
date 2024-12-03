@@ -10,7 +10,7 @@
     </el-button>
     <div class="paper-header">
       <h2 class="paper-title">{{ paper.title }}</h2>
-      <p class="paper-abstract"><strong>Abstract:</strong> {{ paper.abstracts }}</p>
+      <p class="paper-abstract"><strong>[{{ paper.year }}] [{{ paper.category }}] Abstract:</strong> {{ paper.abstracts }}</p>
     </div>
 
     <div class="section">
@@ -53,9 +53,20 @@
     <!-- VIP 用户额外显示的内容 -->
     <div v-if="isVip" class="section">
       <h3 class="section-title">相似论文:</h3>
-      <el-table :data="similarPapers" class="paper-table" border>
-        <el-table-column label="标题" prop="title"></el-table-column>
-        <el-table-column label="作者" prop="authors"></el-table-column>
+      <el-table
+          :data="similarPapers"
+          style="width: 100%; margin-top: 20px"
+          :show-header="false"
+          stripe
+          class="citedPapers-table"
+      >
+        <!-- 使用插槽来展示自定义内容 -->
+        <el-table-column label="论文" prop="custom" :min-width="100">
+          <template #default="{ row }">
+            [{{ row.year }}] [{{ row.category }}] :
+            <el-button @click="goToPaperDetail(row.id)" type="text">{{ row.title }}</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <!-- 非VIP用户提示信息 -->
@@ -102,6 +113,18 @@ const getPaperDetail = () => {
   });
 }
 
+// 获取相似论文
+const getSImilarPapers = () => {
+  const paperId = route.params.id;
+  get(`/api/paper/similar/${paperId}`, (data) => {
+    if (isVip.value) {
+      similarPapers.value = data;  // VIP用户看到的相似论文
+    }
+  }, () => {
+    ElMessage.error("获取相似论文失败！");
+  });
+}
+
 // 前端跳转到论文详情页
 const goToPaperDetail = (paperId) => {
   router.push({ name: 'PaperDetail', params: { id: paperId } });
@@ -115,10 +138,12 @@ const goBack = () => {
 // 页面加载时调用
 onMounted(() => {
   getPaperDetail();
+  getSImilarPapers();
 });
 
 watch(() => route.params.id, () => {
   getPaperDetail();
+  getSImilarPapers();
 });
 </script>
 
